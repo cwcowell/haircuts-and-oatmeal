@@ -71,3 +71,28 @@ class Portfolio:
             # output += "ticker: {}, shares: {}\n".format(stock.ticker, stock.shares)
             output += str(stock) + "\n"
         return output
+
+    def ramp_up(self):
+        """ buy initial shares of each stock """
+        for stock in self.stocks:
+            initial_date_idx = 0
+            stock.buy(initial_date_idx, self.cash_balance, buy_budget)
+
+    def run_simulation(self):
+        """ actually run the time machine """
+        for date_idx in range(1, len(self.stocks[0].price_history)):
+            for stock in self.stocks:
+                time_to_take_gains = stock.is_above_rise_limit(date_idx, rise_limit)
+                time_to_limit_losses = stock.is_below_sink_limit(date_idx, sink_limit)
+                cool_off_expired = date_idx - stock.last_sell_date >= cool_off_span
+
+                if stock.are_any_shares_owned() and (time_to_take_gains or time_to_limit_losses):
+                    self.cash_balance = stock.sell(date_idx, self.cash_balance, buy_budget)
+                elif stock.are_no_shares_owned() and cool_off_expired:
+                    self.cash_balance = stock.buy(date_idx, self.cash_balance, buy_budget)
+
+    def ramp_down(self):
+        """ sell all shares of all stocks at the end of the simulation """
+        for stock in self.stocks:
+            if stock.are_any_shares_owned():
+                self.cash_balance = stock.sell(9, self.cash_balance, buy_budget)

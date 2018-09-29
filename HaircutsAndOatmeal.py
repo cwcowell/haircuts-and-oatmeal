@@ -6,8 +6,8 @@ import Models
 
 buy_budget = 1000.0  # how much we spend on any stock when buying it
 
-rise_limit_percent = 0.1  # how high a stock can rise before we sell it, to take profits
-sink_limit_percent = 0.05  # how far a stock can sink before we sell it, to protect against further losses
+rise_limit = 0.1  # how high a stock can rise before we sell it, to take profits
+sink_limit = 0.05  # how far a stock can sink before we sell it, to protect against further losses
 cool_off_span = 3  # how long to wait after selling a stock, before automatically buying that stock again
 
 # --- LOAD HISTORICAL PRICES ---
@@ -86,30 +86,6 @@ portfolio = Models.Portfolio(initial_cash_balance, stocks)
 # --- MAIN LOGIC ---
 
 print("initial cash balance: ${:.2f}\n".format(portfolio.cash_balance))
-
-# ramp up: buy initial shares of each stock
-for stock in portfolio.stocks:
-    initial_date_idx = 0
-    stock.buy(initial_date_idx, portfolio.cash_balance, buy_budget)
-
-# run the time machine
-for date_idx in range(1, len(mmm_stock.price_history)):
-    for stock in portfolio.stocks:
-
-        # print("assessing {} on date {}".format(stock.ticker, date_idx))
-        time_to_take_gains = stock.is_above_rise_limit(date_idx, rise_limit_percent)
-        time_to_limit_losses = stock.is_below_sink_limit(date_idx, sink_limit_percent)
-        cool_off_expired = date_idx - stock.last_sell_date >= cool_off_span
-
-        if stock.are_any_shares_owned() and (time_to_take_gains or time_to_limit_losses):
-            portfolio.cash_balance = stock.sell(date_idx, portfolio.cash_balance, buy_budget)
-        elif stock.are_no_shares_owned() and cool_off_expired:
-            portfolio.cash_balance = stock.buy(date_idx, portfolio.cash_balance, buy_budget)
-
-# ramp down: sell it all!
-for stock in portfolio.stocks:
-    if stock.are_any_shares_owned():
-        portfolio.cash_balance = stock.sell(9, portfolio.cash_balance, buy_budget)
 
 starting_cash_balance = len(stocks) * buy_budget
 grand_profit = portfolio.cash_balance - starting_cash_balance
