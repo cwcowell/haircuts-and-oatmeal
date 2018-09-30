@@ -13,9 +13,14 @@ Chris Cowell
 ### To Do
 
 * Change how stocks are created so you can use `stocks.append(Stock('AAPL'))` and it will auto-load the data
-* Store historical data with SQLite
+* Retrieve historical data from SQLite
 * Add unit tests
 * Add Cucumber user acceptance tests
 * Add comparison data to end report: show average profit if we had bought and held for 5 years
 * Better report visualization
 * Auto-find best parameters for `rise_limit`, `sink_limit`, and `cool_off_span`
+
+
+### Acknowledgements
+
+The dataset is from https://www.kaggle.com/camnugent/sandp500, released under CC0 1.0 license.
