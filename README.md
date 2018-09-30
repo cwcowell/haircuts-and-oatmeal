@@ -19,8 +19,9 @@ Chris Cowell
 * Add comparison data to end report: show average profit if we had bought and held for 5 years
 * Better report visualization
 * Auto-find best parameters for `rise_limit`, `sink_limit`, and `cool_off_span`
+* Look into loading data for each stock from DB into a Pandas dataframe, instead of pulling data repeatedly from the DB
 
 
-### Acknowledgements
+### Acknowledgments
 
 The dataset is from https://www.kaggle.com/camnugent/sandp500, released under CC0 1.0 license.
