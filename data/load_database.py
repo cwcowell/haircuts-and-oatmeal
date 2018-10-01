@@ -66,15 +66,15 @@ def main() -> None:
 
     delete_file(db_file_path)
 
-    connection = connect(db_file_path)
-    cursor = connection.cursor()
+    conn = connect(db_file_path)
+    cursor = conn.cursor()
 
     create_historical_prices_table(cursor)
     convert_csv_file_to_db(cursor, csv_file_path)
 
     cursor.close()
-    connection.commit()
-    connection.close()
+    conn.commit()
+    conn.close()
 
 
 if __name__ == '__main__':

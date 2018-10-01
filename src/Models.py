@@ -1,3 +1,5 @@
+import pandas
+import sqlite3
 from termcolor import cprint
 
 
@@ -58,27 +60,45 @@ class Stock:
 
 
 class Portfolio:
-    stocks = None
+    stocks = []
     cash_balance = 0.0
+    initial_cash_balance = 0.0
 
-    def __init__(self, initial_cash_balance, stocks):
+    def __init__(self, initial_cash_balance):
+        self.initial_cash_balance = initial_cash_balance
         self.cash_balance = initial_cash_balance
-        self.stocks = stocks
 
-    def __str__(self):
-        output = "cash balance: {}\n".format(self.cash_balance)
-        for stock in self.stocks:
-            # output += "ticker: {}, shares: {}\n".format(stock.ticker, stock.shares)
-            output += str(stock) + "\n"
-        return output
+    def add_ticker(self, ticker: str) -> None:
+        # open DB
+        conn = sqlite3.connect('../data/SandP500.sqlite3')
+        cursor = conn.cursor()
 
-    def ramp_up(self):
+        # get price history into pandas dataframe
+        sql = f"SELECT (ticker, date, closing_price) FROM historical_prices WHERE ticker = '{ticker}' ORDER BY date;"
+        dataframe = pandas.read_sql(sql, conn)
+
+
+        # cursor.execute(sql)
+        ticker_prices = []
+        # for row in cursor:
+        #     ticker_price = dict()
+        #     ticker_price['ticker']
+        #     ticker_prices.append(row)
+
+        # close DB
+        cursor.close()
+        conn.commit()
+        conn.close()
+        stock = Stock(ticker)
+
+
+    def ramp_up(self) -> None:
         """ buy initial shares of each stock """
         for stock in self.stocks:
             initial_date_idx = 0
             stock.buy(initial_date_idx, self.cash_balance, buy_budget)
 
-    def run_simulation(self):
+    def run_simulation(self) -> None:
         """ actually run the time machine """
         for date_idx in range(1, len(self.stocks[0].price_history)):
             for stock in self.stocks:
@@ -91,7 +111,7 @@ class Portfolio:
                 elif stock.are_no_shares_owned() and cool_off_expired:
                     self.cash_balance = stock.buy(date_idx, self.cash_balance, buy_budget)
 
-    def ramp_down(self):
+    def ramp_down(self) -> None:
         """ sell all shares of all stocks at the end of the simulation """
         for stock in self.stocks:
             if stock.are_any_shares_owned():
