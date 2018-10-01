@@ -4,6 +4,15 @@ This is an **extremely simple** algorithmic trading program. It doesn't actually
 
 The name is a highly bastardized version of a concept from a Shel Silverstein poem, in which he claims "Daddy spends all his money on haircuts and oatmeal." I'm probably remembering that 98% wrong, but it's become a family meme around my house.
 
+### To run
+
+* install conda
+* `cd <repo_root>`
+* `conda env create -f environment.yml`
+* `source activate HaircutsAndOatmeal` (on Windows use `activate HaircutsAndOatmeal` instead)
+* `cd src`
+* `python HaircutsAndOatmeal.py`
+
 
 ### Author
 
