@@ -10,9 +10,13 @@ class Stock:
     last_bought_at_price = 0.0
     last_sell_date_idx = 0
 
-    def __init__(self, ticker, price_history):
+    def __init__(self, ticker: str, price_history: pandas.DataFrame):
         self.ticker = ticker
         self.price_history = price_history
+
+    def is_price_history_valid(self) -> bool:
+        """Determine if the price history is complete -- some stocks have only partial histories."""
+        return len(self.price_history) == 1259
 
     def buy(self, date_idx: int, cash_balance: float, buy_budget: float) -> float:
         bought_shares = buy_budget / self.price_history.iat[date_idx, 1]
@@ -72,23 +76,18 @@ class Portfolio:
         self.sink_limit = sink_limit
         self.cool_off_span = cool_off_span
 
-    def add_ticker(self, ticker: str) -> None:
-        # open DB
-        conn = sqlite3.connect('../data/SandP500.sqlite3')
-        cursor = conn.cursor()
-
+    def add_ticker(self, ticker: str, conn: sqlite3.Connection) -> None:
         # load price history from DB into a pandas dataframe
         sql = f"SELECT date, closing_price FROM historical_prices WHERE ticker = '{ticker}' ORDER BY date;"
         price_history = pandas.read_sql(sql, conn)
 
-        # close DB
-        cursor.close()
-        conn.close()
-
         # create a new Stock instance and add it to the portfolio
-        new_stock = Stock(ticker, price_history)
-        self.stocks.append(new_stock)
-        print(f"added {ticker} to portfolio")
+        stock = Stock(ticker, price_history)
+        if stock.is_price_history_valid():
+            self.stocks.append(stock)
+            print(f"added {ticker} to portfolio")
+        else:
+            print(f"rejected {ticker} from portfolio because of incomplete price history")
 
     def ramp_up(self) -> None:
         """Buy initial shares of each stock."""

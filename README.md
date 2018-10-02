@@ -21,15 +21,13 @@ Chris Cowell
 
 ### To Do
 
-* Change how stocks are created so you can use `stocks.append(Stock('AAPL'))` and it will auto-load the data
-* Retrieve historical data from SQLite
-* Add unit tests
 * Add Cucumber user acceptance tests
+* Add unit tests
+* Complete docstrings
 * Add comparison data to end report: show average profit if we had bought and held for 5 years
 * Better report visualization
 * Auto-find best parameters for `rise_limit`, `sink_limit`, and `cool_off_span`
-* Look into loading data for each stock from DB into a Pandas dataframe, instead of pulling data repeatedly from the DB
-
+* Improve usage message in load_database.py
 
 ### Acknowledgments
 

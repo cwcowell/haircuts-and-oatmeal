@@ -7,6 +7,7 @@ Add help message about how the CC0-licensed dataset can be downloaded from Kragg
 
 import os
 import sqlite3
+import sys
 
 
 def delete_file(file_path: str) -> None:
@@ -57,12 +58,8 @@ def add_csv_line_to_db(cursor: sqlite3.Cursor, csv_line: str) -> None:
     insert_historical_price(cursor, date, ticker, closing_price)
 
 
-def main() -> None:
-    """TODO docstring"""
+def main(csv_file_path: str, db_file_path: str) -> None:
     print("This could take up to 30 seconds on a slow computer.")
-
-    csv_file_path = 'datasets/SandP500/all_stocks_5yr.csv'
-    db_file_path = 'SandP500.sqlite3'
 
     delete_file(db_file_path)
 
@@ -77,5 +74,17 @@ def main() -> None:
     conn.close()
 
 
+def usage() -> None:
+    print("""usage:
+    load_database.py <csv_file_path> <db_file_path>""")
+
+
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) != 2:
+        usage()
+        exit(1)
+
+    csv_file_path = sys.argv[0]
+    db_file_path = sys.argv[1]
+
+    main(csv_file_path, db_file_path)
