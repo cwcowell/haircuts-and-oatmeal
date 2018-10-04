@@ -76,7 +76,7 @@ def main(csv_file_path: str, db_file_path: str) -> None:
 
 def usage() -> None:
     print("""usage:
-    load_database.py <csv_file_path> <db_file_path>""")
+    LoadDatabase.py <csv_file_path> <db_file_path>""")
 
 
 if __name__ == '__main__':
