@@ -10,7 +10,7 @@ def step_impl(context):
     test_historical_prices = [
         'DATE,OPENING_PRICE,LOW_PRICE,HIGH_PRICE,CLOSING_PRICE,VOLUME,TICKER',
         'date1,x,x,x,12.42,x,foo',
-        'date2,y,y,y,100.2,x,bar']
+        'date2,x,x,x,100.2,x,bar']
     test_csv = open(csv_file_path, 'w')
     for test_historical_price in test_historical_prices:
         test_csv.write(test_historical_price + '\n')
