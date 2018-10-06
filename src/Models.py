@@ -1,5 +1,5 @@
-import os
-import pandas
+from src import Helpers
+import pandas as pd
 import sqlite3
 from termcolor import cprint
 import typing
@@ -8,11 +8,11 @@ import typing
 class Stock:
     ticker: str
     shares: float
-    price_history: pandas.DataFrame
+    price_history: pd.DataFrame
     last_bought_at_price: float
     last_sell_date_idx: int = 0
 
-    def __init__(self, ticker: str, price_history: pandas.DataFrame) -> None:
+    def __init__(self, ticker: str, price_history: pd.DataFrame) -> None:
         self.ticker = ticker
         self.price_history = price_history
 
@@ -20,27 +20,22 @@ class Stock:
         """Determine if the price history is complete -- some stocks have only partial histories."""
         return len(self.price_history) == 1259
 
-    def is_verbose_on(self) -> bool:
-        try:
-            is_verbose_on = os.environ['VERBOSE']
-            return is_verbose_on.lower() == 'true'
-        except:
-            return False
-
     def buy(self, date_idx: int, cash_balance: float, buy_budget: float) -> float:
+        """Buy $BUY_BUDGET worth of shares of this stock."""
         bought_shares = buy_budget / self.price_history.iat[date_idx, 1]
-        if self.is_verbose_on():
+        if Helpers.is_verbose_on():
             print("{}:  buy {:.2f} shares at {:.2f} for ${:.2f} on date {}".format(
                 self.ticker, bought_shares, self.price_history.iat[date_idx, 1], buy_budget, date_idx))
         self.shares = bought_shares
-        cash_balance -= buy_budget
+        new_cash_balance = cash_balance - buy_budget
         self.last_bought_at_price = self.price_history.iat[date_idx, 1]
-        return cash_balance
+        return new_cash_balance
 
     def sell(self, date_idx: int, cash_balance: float, original_purchase_value: float) -> float:
+        """Sell all shares of this stock and reflect any profit/loss in the cash balance."""
         sell_value = self.shares * self.price_history.iat[date_idx, 1]
         profit_or_loss = sell_value - original_purchase_value
-        if self.is_verbose_on():
+        if Helpers.is_verbose_on():
             if profit_or_loss >= 0:
                 text_color = 'green'
             else:
@@ -48,10 +43,10 @@ class Stock:
             cprint("{}: ${:.2f}: sell {:.2f} shares at {:.2f} for ${:.2f} on date {}".format(
                 self.ticker, profit_or_loss, self.shares, self.price_history.iat[date_idx, 1], sell_value, date_idx),
                 text_color)
-        cash_balance += sell_value
+        new_cash_balance = cash_balance + sell_value
         self.shares = 0
         self.last_sell_date_idx = date_idx
-        return cash_balance
+        return new_cash_balance
 
     def is_below_sink_limit(self, date_idx: int, sink_limit_percent: float) -> bool:
         if sink_limit_percent == -1:
@@ -83,29 +78,34 @@ class Portfolio:
     sink_limit: float
     cool_off_span:int  # measured in days
 
-    def load_pickled_price_history(self, ticker: str) -> pandas.DataFrame:
+    def load_pickled_price_history(self, ticker: str) -> pd.DataFrame:
         try:
-            price_history = pandas.read_pickle(f'../data/pickles/{ticker}.pkl')
+            price_history = pd.read_pickle(f'../data/pickles/{ticker}.pkl')
             return price_history
         except:
             print(f"failed to read pickle for {ticker}")
             return None
 
-    def load_db_price_history(self, ticker: str, conn: sqlite3.Connection) -> pandas.DataFrame:
+    def load_db_price_history(self, ticker: str, conn: sqlite3.Connection) -> pd.DataFrame:
         sql = f"SELECT date, closing_price FROM historical_prices WHERE ticker = '{ticker}' ORDER BY date;"
-        price_history = pandas.read_sql(sql, conn)
+        price_history = pd.read_sql(sql, conn)
         price_history.to_pickle(f'../data/pickles/{ticker}.pkl')
         return price_history
 
-    def add_ticker(self, ticker: str, conn: sqlite3.Connection) -> None:
-        # load price history from fast pickle (preferred) or slow DB (fallback)
-        price_history = self.load_pickled_price_history(ticker)
+    def add_ticker(self,
+                   ticker: str,
+                   conn: sqlite3.Connection,
+                   price_history: pd.DataFrame = None,
+                   test_mode: bool = False) -> None:
         if type(price_history).__name__ != 'DataFrame':
-            price_history = self.load_db_price_history(ticker, conn)
+            # load price history from fast pickle (preferred) or slow DB (fallback)
+            price_history = self.load_pickled_price_history(ticker)
+            if type(price_history).__name__ != 'DataFrame':
+                price_history = self.load_db_price_history(ticker, conn)
 
         # create a new Stock instance and add it to the portfolio
         stock = Stock(ticker, price_history)
-        if stock.is_price_history_valid():
+        if (test_mode == True) or (stock.is_price_history_valid()):
             self.stocks.append(stock)
             print(f"added {ticker} to portfolio")
         else:
@@ -122,7 +122,7 @@ class Portfolio:
         for stock in self.stocks:
             if stock.are_any_shares_owned():
                 # TODO fix the sell-on date, which is currently hard-coded
-                self.cash_balance = stock.sell(1200, self.cash_balance, self.buy_budget)
+                self.cash_balance = stock.sell(-1, self.cash_balance, self.buy_budget)
 
     def run_simulation(self,
                        initial_cash_balance: float,

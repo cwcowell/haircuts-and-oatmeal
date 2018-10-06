@@ -4,8 +4,8 @@ This is an **extremely simple** algorithmic trading program. It doesn't actually
 
 The name is a highly bastardized version of a concept from a Shel Silverstein poem, in which he claims "Daddy spends all his money on haircuts and oatmeal." I'm probably remembering that 98% wrong, but it's become a family meme around my house.
 
-### To run
 
+### To run
 * install conda
 * `cd <repo_root>`
 * `conda env create -f environment.yml`
@@ -14,13 +14,16 @@ The name is a highly bastardized version of a concept from a Shel Silverstein po
 * `python HaircutsAndOatmeal.py`
 
 
-### Author
+### To run tests
+* `cd <repo_root>`
+* `behave test/features`
 
+
+### Author
 Chris Cowell
 
 
 ### To Do
-
 * Add Cucumber user acceptance tests
 * Add unit tests
 * Complete docstrings
@@ -29,6 +32,6 @@ Chris Cowell
 * Auto-find best parameters for `rise_limit`, `sink_limit`, and `cool_off_span`
 * Improve usage message in load_database.py
 
-### Acknowledgments
 
+### Acknowledgments
 The dataset is from https://www.kaggle.com/camnugent/sandp500, released under CC0 1.0 license.
