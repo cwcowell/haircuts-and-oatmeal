@@ -8,19 +8,22 @@ import typing
 BUY_BUDGET: float = 1000.0
 
 # how high a stock can rise before we sell it to take profits
-RISE_LIMITS: typing.List = [.1, .25, .75, .96]
+RISE_LIMITS: typing.List = [.1, .2, .4, .6, .8, .10, .25, .75, .96]
 
 # how far a stock can sink before we sell it, to protect against further losses
-# SINK_LIMITS: typing.List = [0.02, .1, .15, .25]
-SINK_LIMITS: typing.List = [.3]
+SINK_LIMITS: typing.List = [0.02, .1, .15, .25]
 
 # how long to wait after selling a stock, before automatically buying that stock again
-# COOL_OFF_SPANS: typing.List = [3, 10, 30]
-COOL_OFF_SPANS: typing.List = [10]
+COOL_OFF_SPANS: typing.List = [3, 10, 30]
 
+# how many days' worth of price history a stock needs to be considered valid
+REQUIRED_NUM_HISTORICAL_PRICES = 1259
+
+# file paths
 THIS_FILE_PATH: str = os.path.split(os.path.abspath(__file__))[0]
 REPO_ROOT: str = os.path.join(THIS_FILE_PATH, '..')
 DB_FILE_PATH: str = os.path.join(REPO_ROOT, 'data', 'SandP500.sqlite3')
+RESULTS_FILE_PATH: str = os.path.join(REPO_ROOT, 'data', 'results.csv')
 
 
 # ----- MAIN LOGIC -----
@@ -28,23 +31,21 @@ DB_FILE_PATH: str = os.path.join(REPO_ROOT, 'data', 'SandP500.sqlite3')
 conn = sqlite3.connect(DB_FILE_PATH)
 tickers = Helpers.get_all_tickers(conn)
 initial_cash_balance = BUY_BUDGET * len(tickers)
-if Helpers.is_limit_tickers_on():
-    tickers = tickers[:5]
 portfolio = Models.Portfolio()
 for ticker in tickers:
-    portfolio.add_ticker(ticker, conn)
+    portfolio.add_ticker(ticker, REQUIRED_NUM_HISTORICAL_PRICES, conn)
 conn.close()
+
+Helpers.prep_results_file(RESULTS_FILE_PATH)
 
 for rise_limit in RISE_LIMITS:
     for sink_limit in SINK_LIMITS:
         for cool_off_span in COOL_OFF_SPANS:
             print("-----")
             portfolio.run_simulation(initial_cash_balance, BUY_BUDGET, rise_limit, sink_limit, cool_off_span)
-            portfolio.print_parms()
-            portfolio.print_final_stats()
+            portfolio.report_results(RESULTS_FILE_PATH)
 
 # Buy and hold for five years
 print("-----")
 portfolio.run_simulation(initial_cash_balance, BUY_BUDGET, -1, -1, 0)
-portfolio.print_parms()
-portfolio.print_final_stats()
+portfolio.report_results(RESULTS_FILE_PATH)

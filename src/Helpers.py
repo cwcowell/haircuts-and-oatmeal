@@ -2,6 +2,7 @@ import os
 import sqlite3
 import typing
 
+
 def get_all_tickers(conn: sqlite3.Connection) -> typing.List:
     """Extract all ticker symbols from the DB."""
     cursor = conn.cursor()
@@ -13,7 +14,11 @@ def get_all_tickers(conn: sqlite3.Connection) -> typing.List:
         ticker = row[0]
         tickers.append(ticker)
     cursor.close()
-    return tickers
+    if is_limit_tickers_on():
+        return tickers[:5]
+    else:
+        return tickers
+
 
 def is_limit_tickers_on() -> bool:
     """If the user sets the LIMIT_TICKERS env var to true, load only 5 tickers."""
@@ -23,6 +28,7 @@ def is_limit_tickers_on() -> bool:
     except:
         return False
 
+
 def is_verbose_on() -> bool:
     """If the user sets the VERBOSE env var to true, print all transactions."""
     try:
@@ -30,3 +36,9 @@ def is_verbose_on() -> bool:
         return is_verbose_on.lower() == 'true'
     except:
         return False
+
+
+def prep_results_file(file_path) -> None:
+    """Create a file to put our results in, and write CSV headers in it."""
+    with open(file_path, 'w') as results_file:
+        results_file.write('RISE LIMIT,SINK LIMIT,COOL-OFF SPAN,GRAND % CHANGE\n')
