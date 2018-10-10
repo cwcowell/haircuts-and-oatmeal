@@ -41,4 +41,4 @@ def is_verbose_on() -> bool:
 def prep_results_file(file_path) -> None:
     """Create a file to put our results in, and write CSV headers in it."""
     with open(file_path, 'w') as results_file:
-        results_file.write('RISE LIMIT,SINK LIMIT,COOL-OFF SPAN,GRAND % CHANGE\n')
+        results_file.write('RISE LIMIT,SINK LIMIT,COOL-OFF SPAN,GRAND PERCENT CHANGE\n')

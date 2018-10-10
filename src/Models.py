@@ -170,8 +170,8 @@ class Portfolio:
         print(f"rise_limit: {self.rise_limit}, sink_limit: {self.sink_limit}, cool off span: {self.cool_off_span}")
         print(f'initial cash balance: ${self.initial_cash_balance:.2f}')
         print(f'final cash balance: ${self.cash_balance:.0f}')
-        print(f'final amount change: ${grand_profit:.0f}')
-        print(f'final percent change: {grand_percent_change:.0f}%')
+        print(f'grand amount change: ${grand_profit:.0f}')
+        print(f'grand percent change: {grand_percent_change:.0f}%')
 
         with open(results_file_path, 'a') as results_file:
             results_file.write(f'{self.rise_limit},{self.sink_limit},{self.cool_off_span},{grand_percent_change:.0f}\n')
