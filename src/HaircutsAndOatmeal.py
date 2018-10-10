@@ -6,16 +6,19 @@ import sqlite3
 import typing
 
 # how much to spend when buying a stock
-BUY_BUDGET: float = 1000.0
+BUY_BUDGET: int = 1000
 
 # how high a stock can rise before we sell it to take profits
-RISE_LIMITS: typing.List = np.logspace(0, 2, 10)
+rise_limits_floats: typing.List[float] = np.logspace(0, 2, 10)
+RISE_LIMITS: typing.List[int] = np.round(rise_limits_floats).astype(int)
 
 # how far a stock can sink before we sell it, to protect against further losses
-SINK_LIMITS: typing.List = np.logspace(0, 2, 10)
+sink_limits_floats: typing.List[float] = np.logspace(0, 2, 10)
+SINK_LIMITS: typing.List[int] = np.round(sink_limits_floats).astype(int)
 
 # how long to wait after selling a stock, before automatically buying that stock again
-COOL_OFF_SPANS: typing.List = np.round(np.logspace(0, 2, 10))
+cool_off_spans_floats: typing.List[float] = np.logspace(0, 2, 10)
+COOL_OFF_SPANS: typing.List[int] = np.round(cool_off_spans_floats).astype(int)
 
 # how many days' worth of price history a stock needs to be considered valid
 REQUIRED_NUM_HISTORICAL_PRICES = 1259
