@@ -1,5 +1,6 @@
 import Helpers
 import Models
+import numpy as np
 import os
 import sqlite3
 import typing
@@ -8,13 +9,13 @@ import typing
 BUY_BUDGET: float = 1000.0
 
 # how high a stock can rise before we sell it to take profits
-RISE_LIMITS: typing.List = [.1, .2, .4, .6, .8, .10, .25, .75, .96]
+RISE_LIMITS: typing.List = np.logspace(0, 2, 10)
 
 # how far a stock can sink before we sell it, to protect against further losses
-SINK_LIMITS: typing.List = [0.02, .1, .15, .25]
+SINK_LIMITS: typing.List = np.logspace(0, 2, 10)
 
 # how long to wait after selling a stock, before automatically buying that stock again
-COOL_OFF_SPANS: typing.List = [3, 10, 30]
+COOL_OFF_SPANS: typing.List = np.round(np.logspace(0, 2, 10))
 
 # how many days' worth of price history a stock needs to be considered valid
 REQUIRED_NUM_HISTORICAL_PRICES = 1259

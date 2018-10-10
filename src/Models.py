@@ -54,7 +54,7 @@ class Stock:
         if sink_limit_percent == -1:
             return False
         else:
-            sink_limit_price = self.last_bought_at_price - (self.last_bought_at_price * sink_limit_percent)
+            sink_limit_price = self.last_bought_at_price - (self.last_bought_at_price * (sink_limit_percent / 100))
             below: bool = self.price_history.iat[date_idx, 1] <= sink_limit_price
             return below
 
@@ -62,7 +62,7 @@ class Stock:
         if rise_limit_percent == -1:
             return False
         else:
-            rise_limit_price = self.last_bought_at_price + (self.last_bought_at_price * rise_limit_percent)
+            rise_limit_price = self.last_bought_at_price + (self.last_bought_at_price * (rise_limit_percent / 100))
             is_above: bool = self.price_history.iat[date_idx, 1] >= rise_limit_price
             return is_above
 
