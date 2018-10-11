@@ -1,8 +1,10 @@
-import Helpers
-import pandas as pd
 import sqlite3
-from termcolor import cprint
 import typing
+
+import pandas as pd
+from termcolor import cprint
+
+import Helpers
 
 
 class Stock:
@@ -84,8 +86,8 @@ class Portfolio:
         try:
             price_history = pd.read_pickle(f'../data/pickles/{ticker}.pkl')
             return price_history
-        except:
-            print(f"failed to read pickle for {ticker}")
+        except FileNotFoundError:
+            print(f"no pickle available for {ticker}; falling back to DB")
             return None
 
     def load_db_price_history(self, ticker: str, conn: sqlite3.Connection) -> pd.DataFrame:

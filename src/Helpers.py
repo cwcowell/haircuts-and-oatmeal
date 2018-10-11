@@ -6,11 +6,10 @@ import typing
 def get_all_tickers(conn: sqlite3.Connection) -> typing.List:
     """Extract all ticker symbols from the DB."""
     cursor = conn.cursor()
-    sql = 'SELECT DISTINCT ticker FROM historical_prices;'
-    cursor.execute(sql)
+    cursor.execute('SELECT DISTINCT ticker FROM historical_prices;')
     tickers = []
-    all_rows = cursor.fetchall()
-    for row in all_rows:
+    rows = cursor.fetchall()
+    for row in rows:
         ticker = row[0]
         tickers.append(ticker)
     cursor.close()
@@ -22,23 +21,24 @@ def get_all_tickers(conn: sqlite3.Connection) -> typing.List:
 
 def is_limit_tickers_on() -> bool:
     """If the user sets the LIMIT_TICKERS env var to true, load only 5 tickers."""
-    try:
-        limit_tickers = os.environ['LIMIT_TICKERS']
-        return limit_tickers.lower() == 'true'
-    except:
-        return False
+    return get_bool_env_var('LIMIT_TICKERS')
 
 
 def is_verbose_on() -> bool:
     """If the user sets the VERBOSE env var to true, print all transactions."""
+    return get_bool_env_var('VERBOSE')
+
+
+def get_bool_env_var(env_var: str) -> bool:
+    """Return the value of a BOOLEAN environment var."""
     try:
-        is_verbose_on = os.environ['VERBOSE']
-        return is_verbose_on.lower() == 'true'
-    except:
+        value = os.environ[env_var]
+        return value.lower() == 'true'
+    except KeyError:
         return False
 
 
-def prep_results_file(file_path) -> None:
-    """Create a file to put our results in, and write CSV headers in it."""
+def prep_results_file(file_path: str) -> None:
+    """Create a file to put our results in, and add CSV headers to it."""
     with open(file_path, 'w') as results_file:
         results_file.write('RISE LIMIT,SINK LIMIT,COOL-OFF SPAN,GRAND PERCENT CHANGE\n')
