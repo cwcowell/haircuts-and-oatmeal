@@ -1,9 +1,11 @@
-from behave import *
-import data.LoadDatabase
-from src import Models
+import sqlite3
+
 import numpy as np
 import pandas as pd
-import sqlite3
+from behave import *
+
+import data.LoadDatabase
+from src import Models
 
 CSV_FILE_PATH = 'test/resources/test.csv'
 DB_FILE_PATH = 'test/resources/test.sqlite3'
@@ -28,7 +30,7 @@ def step_impl(context):
     price_history = pd.DataFrame({'DATE': np.array(['date0', 'date1']),
                                   'PRICE': pd.Categorical([10.0, 9.0]),
                                   'TICKER': 'FOO'})
-    portfolio = Models.Portfolio()
+    portfolio = Models.Portfolio(initial_cash_balance=1000.0, buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,
@@ -42,7 +44,7 @@ def step_impl(context):
                                   'PRICE': pd.Categorical([10.0, 10.9, 12.0]),
                                   'TICKER': 'FOO'})
 
-    portfolio = Models.Portfolio()
+    portfolio = Models.Portfolio(initial_cash_balance=1000.0, buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,
@@ -56,7 +58,7 @@ def step_impl(context):
                                   'PRICE': pd.Categorical([10.0, 12.0, 20.0, 20.0, 20.0, 20.0, 21.0]),
                                   'TICKER': 'FOO'})
 
-    portfolio = Models.Portfolio()
+    portfolio = Models.Portfolio(initial_cash_balance=1000.0, buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,
@@ -107,9 +109,15 @@ def step_impl(context):
                                                                90.0, 200.0, 1.0, 50.0, 51.0, 100.0]),
                                       'TICKER': 'BAR'})
 
-    portfolio = Models.Portfolio()
-    portfolio.add_ticker(ticker='FOO', required_num_historical_prices=-1, conn=None, price_history=price_history_foo)
-    portfolio.add_ticker(ticker='BAR', required_num_historical_prices=-1, conn=None, price_history=price_history_bar)
+    portfolio = Models.Portfolio(initial_cash_balance=2000.0, buy_budget=1000.0)
+    portfolio.add_ticker(ticker='FOO',
+                         required_num_historical_prices=-1,
+                         conn=None,
+                         price_history=price_history_foo)
+    portfolio.add_ticker(ticker='BAR',
+                         required_num_historical_prices=-1,
+                         conn=None,
+                         price_history=price_history_bar)
     context.portfolio = portfolio
 
 
@@ -122,38 +130,30 @@ def step_impl(context):
 
 @when("that stock's price sinks below a sink limit")
 def step_impl(context):
-    context.portfolio.run_simulation(initial_cash_balance=1000.0,
-                                     buy_budget=1000.0,
-                                     rise_limit=0.15,
-                                     sink_limit=0.03,
-                                     cool_off_span=30)
+    context.portfolio.process_all_days(rise_limit=15,
+                                       sink_limit=3,
+                                       cool_off_span=30)
 
 
 @when("that stock's price rises above a rise limit")
 def step_impl(context):
-    context.portfolio.run_simulation(initial_cash_balance=1000.0,
-                                     buy_budget=1000.0,
-                                     rise_limit=0.15,
-                                     sink_limit=0.03,
-                                     cool_off_span=30)
+    context.portfolio.process_all_days(rise_limit=15,
+                                       sink_limit=3,
+                                       cool_off_span=30)
 
 
 @when('the cool-off period has passed')
 def step_impl(context):
-    context.portfolio.run_simulation(initial_cash_balance=1000.0,
-                                     buy_budget=1000.0,
-                                     rise_limit=0.15,
-                                     sink_limit=0.03,
-                                     cool_off_span=3)
+    context.portfolio.process_all_days(rise_limit=15,
+                                       sink_limit=3,
+                                       cool_off_span=3)
 
 
 @when('the simulation completes')
 def step_impl(context):
-    context.portfolio.run_simulation(initial_cash_balance=2000.0,
-                                     buy_budget=1000.0,
-                                     rise_limit=0.15,
-                                     sink_limit=0.03,
-                                     cool_off_span=2)
+    context.portfolio.process_all_days(rise_limit=15,
+                                       sink_limit=3,
+                                       cool_off_span=2)
 
 
 # --- THENs ---

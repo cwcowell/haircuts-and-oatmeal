@@ -24,19 +24,13 @@ Chris Cowell
 
 
 ### To Do
-* Add Cucumber user acceptance tests
-* Add unit tests
-* Complete docstrings
-* Add comparison data to end report: show average profit if we had bought and held for 5 years
 * Better report visualization
 * Auto-find best parameters for `rise_limit`, `sink_limit`, and `cool_off_span`
-* Improve usage message in load_database.py
 * How does it compare to actual buy & hold rate of return:
     - closed at 267.67 on Feb 7, 2018
     - closed at 151.80 on Feb 8, 2013
     - diff is 115.87
-    - 115.87 / 151.80 = 76%
-    
+    - 115.87 / 151.80 = 76%    
 * Note that this algorithm ignores dividends
 
 ### Acknowledgments
