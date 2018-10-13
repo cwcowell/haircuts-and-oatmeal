@@ -6,15 +6,18 @@ The name is a highly bastardized version of a concept from a Shel Silverstein po
 
 
 ### To run
-* install conda
-* `cd <repo_root>`
-* `conda env create -f environment.yml`
-* `source activate HaircutsAndOatmeal` (on Windows use `activate HaircutsAndOatmeal` instead)
-* `cd src`
+* use `conda install` or another Python environment management tool to install dependencies
+    * numpy
+    * pandas
+    * python 3.6 or higher
+    * sqlite3
+    * termcolor
+* `cd <repo_root>/src`
 * `python HaircutsAndOatmeal.py`
 
 
 ### To run tests
+* install `behave` module
 * `cd <repo_root>`
 * `behave test/features`
 

@@ -30,7 +30,7 @@ def step_impl(context):
     price_history = pd.DataFrame({'DATE': np.array(['date0', 'date1']),
                                   'PRICE': pd.Categorical([10.0, 9.0]),
                                   'TICKER': 'FOO'})
-    portfolio = Models.Portfolio(initial_cash_balance=1000.0, buy_budget=1000.0)
+    portfolio = Models.Portfolio(buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,
@@ -44,7 +44,7 @@ def step_impl(context):
                                   'PRICE': pd.Categorical([10.0, 10.9, 12.0]),
                                   'TICKER': 'FOO'})
 
-    portfolio = Models.Portfolio(initial_cash_balance=1000.0, buy_budget=1000.0)
+    portfolio = Models.Portfolio(buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,
@@ -58,7 +58,7 @@ def step_impl(context):
                                   'PRICE': pd.Categorical([10.0, 12.0, 20.0, 20.0, 20.0, 20.0, 21.0]),
                                   'TICKER': 'FOO'})
 
-    portfolio = Models.Portfolio(initial_cash_balance=1000.0, buy_budget=1000.0)
+    portfolio = Models.Portfolio(buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,
@@ -109,7 +109,7 @@ def step_impl(context):
                                                                90.0, 200.0, 1.0, 50.0, 51.0, 100.0]),
                                       'TICKER': 'BAR'})
 
-    portfolio = Models.Portfolio(initial_cash_balance=2000.0, buy_budget=1000.0)
+    portfolio = Models.Portfolio(buy_budget=1000.0)
     portfolio.add_ticker(ticker='FOO',
                          required_num_historical_prices=-1,
                          conn=None,

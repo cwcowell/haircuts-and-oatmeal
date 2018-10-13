@@ -50,7 +50,10 @@ def run_simulation(portfolio: Models.Portfolio) -> None:
 
     # buy and hold for five years, for comparison
     print("-----")
-    portfolio.process_all_days(-1, -1, 0)
+    rise_limit = -1
+    sink_limit = -1
+    cool_off_span = 0
+    portfolio.process_all_days(rise_limit, sink_limit, cool_off_span)
     portfolio.report_results(RESULTS_FILE_PATH, rise_limit, sink_limit, cool_off_span)
 
 

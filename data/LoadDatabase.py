@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """usage: ./LoadDatabase.py <csv_file_path> <db_file_path>
 
 Load all information from the original S&P 500 source CSV file into a SQLite3 DB.
