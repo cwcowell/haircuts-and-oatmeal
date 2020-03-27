@@ -15,6 +15,7 @@ class Stock:
         self.last_sell_date_idx: int = 0
         self.shares: float = 0.0
         self.last_bought_at_price: float = 0.0
+        self.cash_balance: float = 0.0
 
     def are_historical_prices_complete(self, required_num_historical_prices: int) -> bool:
         """Determine if the price history is complete--we can't use stocks with partial histories."""
@@ -28,9 +29,9 @@ class Stock:
         """Buy a fixed value worth of shares of this stock, and return post-purchase cash balance."""
         todays_price: float = float(self.price_history.iat[date_idx, 1])
         bought_shares: float = buy_budget / todays_price
-        self.shares: float = bought_shares
+        self.shares = bought_shares
         new_cash_balance: float = cash_balance - buy_budget
-        self.last_bought_at_price: float = todays_price
+        self.last_bought_at_price = todays_price
         if Helpers.is_verbose_on():
             print(f"{self.ticker}: buy {self.shares:.2f} shares at {todays_price:.2f} "
                   f"for ${buy_budget:.2f} on date {date_idx}. Cash balance: {new_cash_balance:.2f}")

@@ -11,13 +11,14 @@ import Models
 BUY_BUDGET: int = 1000
 
 # how high a stock can rise before we sell it to take profits
-RISE_LIMITS: typing.List[int] = np.logspace(0.1, 2, 10, dtype=int)
+# RISE_LIMITS: typing.List[int] = np.logspace(0.1, 2, 10, dtype=int)
+RISE_LIMITS: np.ndarray = np.logspace(0.1, 2, 10, dtype=int)
 
 # how far a stock can sink before we sell it, to protect against further losses
-SINK_LIMITS: typing.List[int] = np.logspace(0.1, 2, 10, dtype=int)
+SINK_LIMITS: np.ndarray = np.logspace(0.1, 2, 10, dtype=int)
 
 # how long to wait after selling a stock, before automatically buying that stock again
-COOL_OFF_SPANS: typing.List[int] = np.logspace(0.1, 2, 10, dtype=int)
+COOL_OFF_SPANS: np.ndarray = np.logspace(0.1, 2, 10, dtype=int)
 
 # how many days of historical prices a stock needs to be considered valid
 REQUIRED_NUM_HISTORICAL_PRICES: int = 1259
